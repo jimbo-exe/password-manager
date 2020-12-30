@@ -19,7 +19,7 @@ def setgpass(password):
         print("New password set.")
 
 
-def checkgpass():
+def checkgpass(attempt):
     with open("gsalt.dat", "rb") as file:
         salt = pickle.load(file)
 
@@ -29,16 +29,13 @@ def checkgpass():
         except EOFError:  # If the file is empty, it means no password has been set yet
             print("Correct password not know. Kindly set a password first.")
 
-    attempt = bytes(
-        input("Enter the password: "), "utf-8"
-    )  # Change to byte, since hashlib expects byte
-    attempthash = hashlib.pbkdf2_hmac("sha256", attempt, salt, 100)
+    attempthash = hashlib.pbkdf2_hmac("sha256", attempt.encode("utf-8"), salt, 100)
 
     if attempthash == passhash:  # Gpass is correct if the hash matches the stored hash
-        print("Correct password. You're in.")
+        return True
 
     else:
-        print("Incorrect password. Try Again.")
+        return False
 
 
 if __name__ == "__main__":
@@ -55,7 +52,17 @@ if __name__ == "__main__":
     cmd = int(input())
 
     if cmd == 1:
-        setgpass()
+        while True:
+            password = input("Enter the new password: ")
+            confirm = input("Confirm password: ")
+
+            if password == confirm:
+                break
+        setgpass(password)
 
     elif cmd == 2:
-        checkgpass()
+        attempt = input("Enter the password: ")
+        if checkgpass(attempt):
+            print("Correct password. You're in.")
+        else:
+            print("Wrong password. Try again")
