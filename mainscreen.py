@@ -3,11 +3,64 @@ import os
 import gpass as g
 import spass as s
 
-hideables = []
+# hideables = []
+
+os.chdir("bin")
+root = Tk()
+root.title("Password Manager")
+root.geometry("800x500")
+root.configure(background="#505050")
+
+heading_label = Label(root,
+                      text='Password Manager',
+                      font="Arial 35 bold",
+                      justify="center",
+                      fg="orange",
+                      bg="#505050")
+
+heading_label.grid(row=0, column=0, columnspan=3)
+
+
+def tab_button(text):
+    return Button(root,
+                  height=3,
+                  width=22,
+                  text=text,
+                  font="Helvetica 15 bold",
+                  bg="#505050",
+                  foreground="#118ab2")
+
+
+tabs = [tab_button("Retrieve Records").configure(command=retrieve_tab),
+        tab_button("Add New Record").configure(command=add_tab),
+        tab_button("Edit Records").configure(command=edit_tab)]
+
+for i in range(len(tabs)):
+    tabs[i].grid(row=i + 1, column=0, sticky=W)
 
 
 def add_tab():
-    pass
+    global add_labels
+    global add_entrys
+    global okay_button
+
+    def label_maker(text):
+        return Label(root, text=text,
+                     font="Helvetica 15 bold",
+                     bg="#505050",
+                     foreground="#118ab2")
+
+    add_labels = [label_maker("Enter the platform:"),
+                  label_maker("Enter the username:"),
+                  label_maker("Enter the password:"),
+                  label_maker("Confirm Password:")]
+
+    for i in range(4):
+        add_labels[i].grid(row=i + 1, column=1)
+
+    add_entrys = [Entry(root) for i in range(4)]
+    for i in range(4):
+        add_entrys[i].grid(row=i + 1, column=2)
 
 
 def retrieve_tab():
@@ -19,42 +72,6 @@ def edit_tab():
 
 
 def show_welcome():
-    global root
-    global heading_label
-    global tabs
-    global welcome_label
-
-    os.chdir("bin")
-    root = Tk()
-    root.title("Password Manager")
-    root.geometry("800x500")
-    root.configure(background="#505050")
-
-    heading_label = Label(root,
-                          text='Password Manager',
-                          font="Arial 35 bold",
-                          justify="center",
-                          fg="orange",
-                          bg="#505050")
-
-    heading_label.grid(row=0, column=0, columnspan=3)
-
-    def tab_button(text):
-        return Button(root,
-                      height=3,
-                      width=22,
-                      text=text,
-                      font="Helvetica 15 bold",
-                      bg="#505050",
-                      foreground="#118ab2")
-
-    tabs = [tab_button("Retrieve Records").configure(command=retrieve_tab),
-            tab_button("Add New Record").configure(command=add_tab),
-            tab_button("Edit Records").configure(command=edit_tab)]
-
-    for i in range(len(tabs)):
-        tabs[i].grid(row=i + 1, column=0, sticky=W)
-
     welcome_label = Label(root,
                           text="Welcome to Password Manager! Hope you having a great day!" +
                                "Choose a tab from the left to get started.",
@@ -68,4 +85,4 @@ def show_welcome():
 
 
 if __name__ == "__main__":
-    show_welcome()
+    add_tab()
