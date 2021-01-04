@@ -60,10 +60,12 @@ def showWindow():
 def checkPwd():
     if pwdE.get() == confirmE.get():
         gpass.setgpass(pwdE.get())
+        root.destroy()
     else:
         mismatchL = Label(root, text="Passwords don't match", fg="red")
         mismatchL.grid(row=7, column=1)
 
 
-# showWindow()
+if __name__ == "__main__":
+    showWindow()
 
