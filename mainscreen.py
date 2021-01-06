@@ -22,7 +22,6 @@ def initiate():
                           bg="#505050")
 
     heading_label.grid(row=0, column=0, columnspan=3)
-    root.mainloop()
 
 
 def add_tab():
@@ -58,21 +57,22 @@ def edit_tab():
 
 
 def initiate_tabs():
-    def tab_button(text):
+    def tab_button(text, func):
         return Button(root,
                       height=3,
                       width=22,
                       text=text,
                       font="Helvetica 15 bold",
                       bg="#505050",
-                      foreground="#118ab2")
+                      foreground="#118ab2",
+                      command=func)
 
-    tabs = [tab_button("Retrieve Records").configure(command=retrieve_tab),
-            tab_button("Add New Record").configure(command=add_tab),
-            tab_button("Edit Records").configure(command=edit_tab)]
+    tabs = [tab_button("Retrieve Records", retrieve_tab),
+            tab_button("Add New Record", add_tab),
+            tab_button("Edit Records", edit_tab)]
 
     for i in range(len(tabs)):
-        tabs[i].grid(row=i + 1, column=0, sticky=W)
+        tabs[i].grid(row=i+1, column=0, sticky=W)
 
 
 def show_welcome():
@@ -92,3 +92,4 @@ if __name__ == "__main__":
     initiate()
     initiate_tabs()
     add_tab()
+    root.mainloop()
