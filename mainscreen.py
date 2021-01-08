@@ -33,7 +33,7 @@ def initiate():
 
 def add_tab():
     global add_labels
-    global add_entrys
+    global add_entries
     global okay_button
 
     clear()
