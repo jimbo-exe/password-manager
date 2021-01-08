@@ -1,9 +1,16 @@
 from tkinter import *
 import os
-import gpass as g
-import spass as s
 
-# hideables = []
+hideables = []
+
+
+def clear():
+    global hideables
+    if hideables:
+        for i in hideables:
+            i.destroy()
+
+    hideables = []
 
 
 def initiate():
@@ -29,6 +36,8 @@ def add_tab():
     global add_entrys
     global okay_button
 
+    clear()
+
     def label_maker(text):
         return Label(root, text=text,
                      font="Helvetica 15 bold",
@@ -39,13 +48,43 @@ def add_tab():
                   label_maker("Enter the username:"),
                   label_maker("Enter the password:"),
                   label_maker("Confirm Password:")]
+    columns = ("platform", "username", "password", "confirm")
 
     for i in range(4):
         add_labels[i].grid(row=i + 1, column=1)
 
-    add_entrys = [Entry(root) for i in range(4)]
+    add_entries = [Entry(root) for i in range(4)]
     for i in range(4):
-        add_entrys[i].grid(row=i + 1, column=2)
+        add_entries[i].grid(row=i + 1, column=2)
+
+    status_label = label_maker("Awaiting details...")
+    status_label.grid(row=6, column=1, columnspan=2)
+
+    def acquire():
+        data = []
+        for i in range(len(add_entries)):
+            detail = add_entries[i].get()
+            if detail.rstrip().lstrip() == "":
+                status_label.configure(text=f"{columns[i]} is empty! Please fill it.")
+                return None
+            else:
+                data.append(detail)
+
+        if data[-1] != data[-2]:
+            status_label.config(text="Confirm password doesn't match! Please reenter.")
+            return None
+
+        else:
+            # addrec(data[:-1])
+            status_label.config(text="Record successfully added!")
+
+    okay_button = Button(root, text="Add", fg="#118ab2", bg="#505050",
+                         font="Helvetica 15 bold", command=acquire)
+    okay_button.grid(row=5, column=1, columnspan=2)
+    hideables.append(okay_button)
+    hideables.append(status_label)
+    hideables.extend(add_entries)
+    hideables.extend(add_labels)
 
 
 def retrieve_tab():
@@ -72,10 +111,11 @@ def initiate_tabs():
             tab_button("Edit Records", edit_tab)]
 
     for i in range(len(tabs)):
-        tabs[i].grid(row=i+1, column=0, sticky=W)
+        tabs[i].grid(row=2*i+1, column=0, sticky=W, rowspan=2)
 
 
 def show_welcome():
+    global welcome_label
     welcome_label = Label(root,
                           text="Welcome to Password Manager! Hope you having a great day!" +
                                "Choose a tab from the left to get started.",
@@ -84,8 +124,7 @@ def show_welcome():
                           bg="#505050")
 
     welcome_label.grid(row=1, column=1, rowspan=3, columnspan=2)
-
-    root.mainloop()
+    hideables.append(welcome_label)
 
 
 if __name__ == "__main__":
