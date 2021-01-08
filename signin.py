@@ -34,7 +34,7 @@ def attempt():
 
     if gpass.checkgpass(pwd):
         root.destroy()
-#        mainscreen kholne wala function 
+        mainscreen.initiate()
     else:
         incorrectL = Label(root, text="Password incorrect", fg="red")
         incorrectL.grid(row=3, column=1)

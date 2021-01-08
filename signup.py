@@ -1,6 +1,7 @@
 from tkinter import *
 import gpass
 import os
+import mainscreen
 
 
 def showWindow():
@@ -61,6 +62,7 @@ def checkPwd():
     if pwdE.get() == confirmE.get():
         gpass.setgpass(pwdE.get())
         root.destroy()
+        mainscreen.initiate()
     else:
         mismatchL = Label(root, text="Passwords don't match", fg="red")
         mismatchL.grid(row=7, column=1)
