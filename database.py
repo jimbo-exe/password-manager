@@ -1,11 +1,14 @@
 import sqlite3
 from datetime import datetime
 
-conn = sqlite3.connect(":memory:")
-c = conn.cursor()
+
+def initiate_db():
+    global conn, c
+    conn = sqlite3.connect("db")
+    c = conn.cursor()
 
 
-def initiate():
+def initiate_table():
     statement = """CREATE TABLE password
                   (platform text primary key,
                    username text,
@@ -17,23 +20,27 @@ def initiate():
 
 
 def add(platform, username, passhash):
+    initiate_db()
     dt = datetime.now()
     c.execute("INSERT INTO password VALUES(?,?,?,?)", (platform, username, passhash, dt))
     conn.commit()
 
 
 def retrieve(platform):
+    initiate_db()
     c.execute("SELECT * FROM password WHERE platform = ?", (platform,))
     data = c.fetchone()
     return data
 
 
 def delete(platform):
+    initiate_db()
     c.execute("DELETE FROM password WHERE platform = ?", (platform,))
     conn.commit()
 
 
 def names():
+    initiate_db()
     c.execute("SELECT platform FROM password")
     data = c.fetchall()
     return data

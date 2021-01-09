@@ -3,13 +3,12 @@ import shutil
 import pickle
 import database
 
+
 def create_folder(folder_name):
     cwd = os.getcwd()
     folder_path = os.path.join(cwd, folder_name)  # The path of the folder to be created
 
-    if not os.path.isdir(
-        folder_path
-    ):  # Checking that the folder does not exist already
+    if not os.path.isdir(folder_path):  # Checking that the folder does not exist already
         try:
             os.makedirs(folder_path)
             print("Created: " + folder_path)
@@ -77,4 +76,5 @@ if __name__ == "__main__":
                 with open(file_list[i], "wb") as file:
                     create_salt()
 
-    database.initiate()
+    database.initiate_db()
+    database.initiate_table()
