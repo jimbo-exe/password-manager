@@ -90,7 +90,45 @@ def add_tab():
 
 def retrieve_tab():
     clear()
+    data = database.names()
 
+    info_label = Label(root, text="Select which record you want to view:",
+                       font="Helvetica 15 bold",
+                       bg="#505050",
+                       foreground="#118ab2")
+
+    info_label.grid(row=1, column=1, columnspan=2)
+
+    def command_maker(name):  # Returns function for the record buttons
+        def cmd():
+            clear()
+            details = database.retrieve(name)
+            platform_label = Label(root, text=details[0],
+                                   font="Helvetica 15 bold",
+                                   bg="#505050",
+                                   foreground="#118ab2")
+            username_label = Label(root, text=details[1],
+                                   font="Helvetica 15 bold",
+                                   bg="#505050",
+                                   foreground="#118ab2")
+            date_label = Label(root, text=details[0],
+                               font="Helvetica 15 bold",
+                               bg="#505050",
+                               foreground="#118ab2")
+            #tbc
+        return cmd
+
+    def button_maker(text):
+        return Button(root, text=text, fg="#118ab2", bg="#505050",
+                      height=2, width=15,
+                      font="Helvetica 15 bold", command=command_maker)
+
+    button_list = []
+    for i in data:
+        button_list.append(button_maker(i))
+
+    for i in range(len(button_list)):
+        button_list[i].grid(row=i // 2 + 2, column=i % 2 + 1)
 
 
 def edit_tab():
@@ -113,7 +151,7 @@ def initiate_tabs():
             tab_button("Edit Records", edit_tab)]
 
     for i in range(len(tabs)):
-        tabs[i].grid(row=2*i+1, column=0, sticky=W, rowspan=2)
+        tabs[i].grid(row=2 * i + 1, column=0, sticky=W, rowspan=2)
 
 
 def show_welcome():
@@ -132,5 +170,5 @@ def show_welcome():
 if __name__ == "__main__":
     initiate()
     initiate_tabs()
-    add_tab()
+    show_welcome()
     root.mainloop()
