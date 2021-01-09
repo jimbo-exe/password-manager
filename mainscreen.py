@@ -1,5 +1,6 @@
 from tkinter import *
 import os
+import database
 
 hideables = []
 
@@ -75,7 +76,7 @@ def add_tab():
             return None
 
         else:
-            # addrec(data[:-1])
+            database.add(data[0], data[1], data[2])
             status_label.config(text="Record successfully added!")
 
     okay_button = Button(root, text="Add", fg="#118ab2", bg="#505050",
@@ -88,7 +89,7 @@ def add_tab():
 
 
 def retrieve_tab():
-    pass
+    clear()
 
 
 def edit_tab():

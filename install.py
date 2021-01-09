@@ -1,7 +1,7 @@
 import os
 import shutil
 import pickle
-
+import database
 
 def create_folder(folder_name):
     cwd = os.getcwd()
@@ -76,3 +76,5 @@ if __name__ == "__main__":
             if i != 0:
                 with open(file_list[i], "wb") as file:
                     create_salt()
+
+    database.initiate()

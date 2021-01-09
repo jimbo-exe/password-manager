@@ -27,6 +27,7 @@ def retrieve(platform):
     data = c.fetchone()
     return data
 
+
 def delete(platform):
     c.execute("DELETE FROM password WHERE platform = ?", (platform,))
     conn.commit()
@@ -36,3 +37,7 @@ def names():
     c.execute("SELECT platform FROM password")
     data = c.fetchall()
     return data
+
+
+if __name__ == "__main":
+    print(names())
