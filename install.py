@@ -2,6 +2,7 @@ import os
 import shutil
 import pickle
 import database
+import signup
 
 
 def create_folder(folder_name):
@@ -78,3 +79,4 @@ if __name__ == "__main__":
 
     database.initiate_db()
     database.initiate_table()
+    signup.showWindow()

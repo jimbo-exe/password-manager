@@ -54,15 +54,18 @@ def add_tab():
 
     columns = ("platform", "username", "password", "confirm")
 
-    for i in range(4):
+    for i in range(len(add_labels)):
         add_labels[i].grid(row=i + 1, column=1)
 
-    add_entries = [Entry(root) for i in range(4)]
-    for i in range(4):
+    add_entries = [Entry(root) for i in range(len(add_labels))]
+    for i in range(len(add_labels)):
         add_entries[i].grid(row=i + 1, column=2)
 
-    status_label = label_maker("Awaiting details...")
-    status_label.grid(row=6, column=1, columnspan=2)
+    status_label = Label(root, text="Awaiting Details...",
+                         font="Helvetica 15 bold",
+                         bg="#505050",
+                         foreground="#ff3838")
+    status_label.grid(row=7, column=1, columnspan=2)
 
     def acquire():
         data = []
@@ -74,19 +77,22 @@ def add_tab():
             else:
                 data.append(detail)
 
-        if data[-1] != data[-2]:
+        if data[2] != data[3]:
             status_label.config(text="Confirm password doesn't match! Please reenter.")
             return None
 
         else:
             attempt = data[-1]
-            database.add(data[0], data[1],
-                         spass.encrypt_spass(data[2].encode("utf-8"), spass.get_key(attempt)))
-            status_label.config(text="Record successfully added!")
+            if gpass.checkgpass(attempt):
+                database.add(data[0], data[1],
+                             spass.encrypt_spass(data[2].encode("utf-8"), spass.get_key(attempt)))
+                status_label.config(text="Record successfully added!")
+            else:
+                status_label.config(text="Global password incorrect... Please reenter")
 
     okay_button = Button(root, text="Add", fg="#118ab2", bg="#505050",
                          font="Helvetica 15 bold", command=acquire)
-    okay_button.grid(row=5, column=1, columnspan=2)
+    okay_button.grid(row=6, column=1, columnspan=2)
     hideables.append(okay_button)
     hideables.append(status_label)
     hideables.extend(add_entries)
@@ -124,11 +130,13 @@ def retrieve_tab():
             platform_label.grid(row=1, column=1, columnspan=2)
             username_label.grid(row=2, column=1, columnspan=2)
             date_label.grid(row=3, column=1, columnspan=2)
+            hideables.extend([platform_label, username_label, date_label])
 
             status_label = Label(root, text="Click Below to Get password: ",
                                  font="Helvetica 15 bold",
                                  bg="#505050",
-                                 foreground="#118ab2")
+                                 foreground="#ff3838")
+            hideables.append(status_label)
 
             def decrypt():
                 attempt_label = Label(root,
@@ -140,40 +148,53 @@ def retrieve_tab():
                 attempt_entry = Entry()
                 attempt_label.grid(row=6, column=1)
                 attempt_entry.grid(row=6, column=2)
+                hideables.extend([attempt_entry, attempt_label])
 
                 def get_attempt():
                     attempt = attempt_entry.get()
 
                     if gpass.checkgpass(attempt):
+                        password = spass.decrypt_spass(database.retrieve(name)[2],
+                                                       spass.get_key(attempt))
                         password_label = Label(root,
-                                               text=spass.decrypt_spass(
-                                                   database.retrieve(name)[2],
-                                                   spass.get_key(attempt)),
+                                               text=b"Password: " + password,
                                                font="Helvetica 15 bold",
                                                bg="#505050",
                                                foreground="#118ab2")
-                        password_label.grid(row=7, column=2, columnspan=2)
-                        status_label.config(text=
-                                            "Password Obtained! Copy and enter where required.")
+                        password_label.grid(row=8, column=1, columnspan=2)
+                        hideables.append(password_label)
+                        status_label.configure(text="Password Obtained! Copy and enter where required.")
+
+                        def copy():
+                            root.clipboard_clear()
+                            root.clipboard_append(password)
+
+                        copy_button = Button(root, text="Copy", fg="#118ab2", bg="#505050",
+                                             height=1, width=9,
+                                             font="Helvetica 15 bold", command=copy)
+                        copy_button.grid(row=7, column=2)
                     else:
-                        status_label.config("Wrong password! Please Reenter.")
+                        status_label.configure(text="Wrong password! Please Reenter.")
 
                 attempt_okay = Button(root, text="Enter", fg="#118ab2", bg="#505050",
-                                      height=2, width=15,
+                                      height=1, width=9,
                                       font="Helvetica 15 bold", command=get_attempt)
-                attempt_okay.grid(row=7, column=1, columnspan=2)
+                attempt_okay.grid(row=7, column=1)
+                hideables.append(attempt_okay)
 
             decrypt_button = Button(root, text="Decrypt", fg="#118ab2", bg="#505050",
-                                    height=2, width=15,
+                                    height=1, width=9,
                                     font="Helvetica 15 bold", command=decrypt)
 
             status_label.grid(row=4, column=1, columnspan=2)
             decrypt_button.grid(row=5, column=1, columnspan=2)
+            hideables.append(decrypt_button)
 
-            back_button = Button(root, text="<-- Go Back", fg="#118ab2", bg="#505050",
-                                 height=2, width=15,
-                                 font="Helvetica 15 bold", command=retrieve_tab)
-            back_button.grid(row=8, column=1)
+            back_button = Button(root, text="<-- Back", fg="#118ab2", bg="#505050",
+                                 height=1, width=7,
+                                 font="Helvetica 7 bold", command=retrieve_tab)
+            back_button.grid(row=9, column=1)
+            hideables.append(back_button)
 
         return cmd
 
@@ -191,6 +212,7 @@ def retrieve_tab():
 
     hideables.extend(button_list)
 
+
 def edit_tab():
     clear()
     data = database.names()
@@ -205,7 +227,7 @@ def edit_tab():
     def button_maker(name):
         return Button(root, text=name, fg="#118ab2", bg="#505050",
                       height=2, width=15,
-                      font="Helvetica 15 bold", command=lambda : None)
+                      font="Helvetica 15 bold", command=lambda: None)
 
     button_list = []
     for i in data:
