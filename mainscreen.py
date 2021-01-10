@@ -18,7 +18,6 @@ def clear():
 
 def initiate():
     global root, heading_label
-    os.chdir("bin")
     root = Tk()
     root.title("Password Manager")
     root.geometry("800x500")
@@ -249,6 +248,7 @@ def show_welcome():
 
 
 if __name__ == "__main__":
+    os.chdir("bin")
     initiate()
     initiate_tabs()
     show_welcome()

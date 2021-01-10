@@ -63,6 +63,8 @@ def checkPwd():
         gpass.setgpass(pwdE.get())
         root.destroy()
         mainscreen.initiate()
+        mainscreen.initiate_tabs()
+        mainscreen.show_welcome()
     else:
         mismatchL = Label(root, text="Passwords don't match", fg="red")
         mismatchL.grid(row=7, column=1)
