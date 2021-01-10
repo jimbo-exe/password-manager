@@ -18,7 +18,7 @@ def clear():
 
 def initiate():
     global root, heading_label
-#    os.chdir("bin")
+    os.chdir("bin")
     root = Tk()
     root.title("Password Manager")
     root.geometry("800x500")
@@ -50,7 +50,9 @@ def add_tab():
     add_labels = [label_maker("Enter the platform:"),
                   label_maker("Enter the username:"),
                   label_maker("Enter the password:"),
-                  label_maker("Confirm Password:")]
+                  label_maker("Confirm Password:"),
+                  label_maker("Enter Global Password: ")]
+
     columns = ("platform", "username", "password", "confirm")
 
     for i in range(4):
@@ -78,7 +80,9 @@ def add_tab():
             return None
 
         else:
-            database.add(data[0], data[1], spass.encrypt_spass(data[2]))
+            attempt = data[-1]
+            database.add(data[0], data[1],
+                         spass.encrypt_spass(data[2].encode("utf-8"), spass.get_key(attempt)))
             status_label.config(text="Record successfully added!")
 
     okay_button = Button(root, text="Add", fg="#118ab2", bg="#505050",
@@ -100,6 +104,7 @@ def retrieve_tab():
                        foreground="#118ab2")
 
     info_label.grid(row=1, column=1, columnspan=2)
+    hideables.append(info_label)
 
     def command_maker(name):  # Returns function for the record buttons
         def cmd():
@@ -109,11 +114,11 @@ def retrieve_tab():
                                    font="Helvetica 15 bold",
                                    bg="#505050",
                                    foreground="#118ab2")
-            username_label = Label(root, text="Usrename: " + details[1],
+            username_label = Label(root, text="Username: " + details[1],
                                    font="Helvetica 15 bold",
                                    bg="#505050",
                                    foreground="#118ab2")
-            date_label = Label(root, text="Last Edited: " + details[0],
+            date_label = Label(root, text="Last Edited: " + details[3],
                                font="Helvetica 15 bold",
                                bg="#505050",
                                foreground="#118ab2")
@@ -185,6 +190,7 @@ def retrieve_tab():
     for i in range(len(button_list)):
         button_list[i].grid(row=i // 2 + 2, column=i % 2 + 1)
 
+    hideables.extend(button_list)
 
 def edit_tab():
     clear()

@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-
+import os
 
 def initiate_db():
     global conn, c
@@ -28,7 +28,7 @@ def add(platform, username, passhash):
 
 def retrieve(platform):
     initiate_db()
-    c.execute("SELECT * FROM password WHERE platform = '?'", (platform,))
+    c.execute("SELECT * FROM password WHERE platform = ?", (platform,))
     data = c.fetchone()
     return data
 
@@ -43,8 +43,11 @@ def names():
     initiate_db()
     c.execute("SELECT platform FROM password")
     data = c.fetchall()
+    for i in range(len(data)):
+        data[i] = data[i][0]
     return data
 
 
-if __name__ == "__main":
+if __name__ == "__main__":
+    os.chdir("bin")
     print(names())
