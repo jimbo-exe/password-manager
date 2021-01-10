@@ -70,4 +70,5 @@ def checkPwd():
 
 if __name__ == "__main__":
     showWindow()
+    root.mainloop()
 
