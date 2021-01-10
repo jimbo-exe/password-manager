@@ -4,7 +4,7 @@ from datetime import datetime
 
 def initiate_db():
     global conn, c
-    conn = sqlite3.connect("db")
+    conn = sqlite3.connect("db.db")
     c = conn.cursor()
 
 

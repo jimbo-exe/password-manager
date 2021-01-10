@@ -18,7 +18,7 @@ def clear():
 
 def initiate():
     global root, heading_label
-    os.chdir("bin")
+#    os.chdir("bin")
     root = Tk()
     root.title("Password Manager")
     root.geometry("800x500")
