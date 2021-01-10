@@ -1,6 +1,7 @@
 from tkinter import *
 import os
 import database
+import spass
 
 hideables = []
 
@@ -76,7 +77,7 @@ def add_tab():
             return None
 
         else:
-            database.add(data[0], data[1], data[2])
+            database.add(data[0], data[1], spass.encrypt_spass(data[2]))
             status_label.config(text="Record successfully added!")
 
     okay_button = Button(root, text="Add", fg="#118ab2", bg="#505050",
@@ -103,25 +104,53 @@ def retrieve_tab():
         def cmd():
             clear()
             details = database.retrieve(name)
-            platform_label = Label(root, text=details[0],
+            platform_label = Label(root, text="Platform: " + details[0],
                                    font="Helvetica 15 bold",
                                    bg="#505050",
                                    foreground="#118ab2")
-            username_label = Label(root, text=details[1],
+            username_label = Label(root, text="Usrename: " + details[1],
                                    font="Helvetica 15 bold",
                                    bg="#505050",
                                    foreground="#118ab2")
-            date_label = Label(root, text=details[0],
+            date_label = Label(root, text="Last Edited: " + details[0],
                                font="Helvetica 15 bold",
                                bg="#505050",
                                foreground="#118ab2")
-            #tbc
+            platform_label.grid(row=1, column=1, columnspan=2)
+            username_label.grid(row=2, column=1, columnspan=2)
+            date_label.grid(row=3, column=1, columnspan=2)
+
+            status_label = Label(root, text="Click Below to Get password: ",
+                                 font="Helvetica 15 bold",
+                                 bg="#505050",
+                                 foreground="#118ab2")
+
+            def decrypt():
+                password_label = Label(root, text=spass.decrypt_spass(database.retrieve(name)[2]),
+                                       font="Helvetica 15 bold",
+                                       bg="#505050",
+                                       foreground="#118ab2")
+                password_label.grid(row=6, column=2, columnspan=2)
+                status_label.config(text="Password Obtained! Copy and enter where required.")
+
+            decrypt_button = Button(root, text="Decrypt", fg="#118ab2", bg="#505050",
+                                    height=2, width=15,
+                                    font="Helvetica 15 bold", command=decrypt)
+
+            status_label.grid(row=4, column=1, columnspan=2)
+            decrypt_button.grid(row=5, column=1)
+
+            back_button = Button(root, text="<-- Go Back", fg="#118ab2", bg="#505050",
+                                 height=2, width=15,
+                                 font="Helvetica 15 bold", command=retrieve_tab)
+            back_button.grid(row=7, column=1)
+
         return cmd
 
-    def button_maker(text):
-        return Button(root, text=text, fg="#118ab2", bg="#505050",
+    def button_maker(name):
+        return Button(root, text=name, fg="#118ab2", bg="#505050",
                       height=2, width=15,
-                      font="Helvetica 15 bold", command=command_maker)
+                      font="Helvetica 15 bold", command=command_maker(name))
 
     button_list = []
     for i in data:
