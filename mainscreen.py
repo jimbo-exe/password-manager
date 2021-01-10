@@ -2,6 +2,7 @@ from tkinter import *
 import os
 import database
 import spass
+import gpass
 
 hideables = []
 
@@ -126,24 +127,49 @@ def retrieve_tab():
                                  foreground="#118ab2")
 
             def decrypt():
-                password_label = Label(root, text=spass.decrypt_spass(database.retrieve(name)[2]),
-                                       font="Helvetica 15 bold",
-                                       bg="#505050",
-                                       foreground="#118ab2")
-                password_label.grid(row=6, column=2, columnspan=2)
-                status_label.config(text="Password Obtained! Copy and enter where required.")
+                attempt_label = Label(root,
+                                      text="Enter the global password:",
+                                      font="Helvetica 15 bold",
+                                      bg="#505050",
+                                      foreground="#118ab2")
+
+                attempt_entry = Entry()
+                attempt_label.grid(row=6, column=1)
+                attempt_entry.grid(row=6, column=2)
+
+                def get_attempt():
+                    attempt = attempt_entry.get()
+
+                    if gpass.checkgpass(attempt):
+                        password_label = Label(root,
+                                               text=spass.decrypt_spass(
+                                                   database.retrieve(name)[2],
+                                                   spass.get_key(attempt)),
+                                               font="Helvetica 15 bold",
+                                               bg="#505050",
+                                               foreground="#118ab2")
+                        password_label.grid(row=7, column=2, columnspan=2)
+                        status_label.config(text=
+                                            "Password Obtained! Copy and enter where required.")
+                    else:
+                        status_label.config("Wrong password! Please Reenter.")
+
+                attempt_okay = Button(root, text="Enter", fg="#118ab2", bg="#505050",
+                                      height=2, width=15,
+                                      font="Helvetica 15 bold", command=get_attempt)
+                attempt_okay.grid(row=7, column=1, columnspan=2)
 
             decrypt_button = Button(root, text="Decrypt", fg="#118ab2", bg="#505050",
                                     height=2, width=15,
                                     font="Helvetica 15 bold", command=decrypt)
 
             status_label.grid(row=4, column=1, columnspan=2)
-            decrypt_button.grid(row=5, column=1)
+            decrypt_button.grid(row=5, column=1, columnspan=2)
 
             back_button = Button(root, text="<-- Go Back", fg="#118ab2", bg="#505050",
                                  height=2, width=15,
                                  font="Helvetica 15 bold", command=retrieve_tab)
-            back_button.grid(row=7, column=1)
+            back_button.grid(row=8, column=1)
 
         return cmd
 
@@ -161,7 +187,27 @@ def retrieve_tab():
 
 
 def edit_tab():
-    pass
+    clear()
+    data = database.names()
+
+    info_label = Label(root, text="Select which record you want to edit:",
+                       font="Helvetica 15 bold",
+                       bg="#505050",
+                       foreground="#118ab2")
+
+    info_label.grid(row=1, column=1, columnspan=2)
+
+    def button_maker(name):
+        return Button(root, text=name, fg="#118ab2", bg="#505050",
+                      height=2, width=15,
+                      font="Helvetica 15 bold", command=lambda : None)
+
+    button_list = []
+    for i in data:
+        button_list.append(button_maker(i))
+
+    for i in range(len(button_list)):
+        button_list[i].grid(row=i // 2 + 2, column=i % 2 + 1)
 
 
 def initiate_tabs():

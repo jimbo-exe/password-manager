@@ -28,7 +28,7 @@ def add(platform, username, passhash):
 
 def retrieve(platform):
     initiate_db()
-    c.execute("SELECT * FROM password WHERE platform = ?", (platform,))
+    c.execute("SELECT * FROM password WHERE platform = '?'", (platform,))
     data = c.fetchone()
     return data
 
