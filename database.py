@@ -2,6 +2,7 @@ import sqlite3
 from datetime import datetime
 import os
 
+
 def initiate_db():
     global conn, c
     conn = sqlite3.connect("db.db")
@@ -46,6 +47,13 @@ def names():
     for i in range(len(data)):
         data[i] = data[i][0]
     return data
+
+
+def edit(platform, column, entry):
+    initiate_db()
+    dt = datetime.now()
+    c.execute('''UPDATE TABLE password 
+    SET ? = ?, datetime = ? WHERE platform = ?''', (column, entry, dt, platform))
 
 
 if __name__ == "__main__":

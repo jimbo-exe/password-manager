@@ -33,18 +33,19 @@ def initiate():
     heading_label.grid(row=0, column=0, columnspan=3)
 
 
+def label_maker(text):  # Utility function for the functions below
+    return Label(root, text=text,
+                 font="Helvetica 15 bold",
+                 bg="#505050",
+                 foreground="#118ab2")
+
+
 def add_tab():
     global add_labels
     global add_entries
     global okay_button
 
     clear()
-
-    def label_maker(text):
-        return Label(root, text=text,
-                     font="Helvetica 15 bold",
-                     bg="#505050",
-                     foreground="#118ab2")
 
     add_labels = [label_maker("Enter the platform:"),
                   label_maker("Enter the username:"),
@@ -217,17 +218,92 @@ def edit_tab():
     clear()
     data = database.names()
 
-    info_label = Label(root, text="Select which record you want to edit:",
+    info_label = Label(root, text="Select which record to edit: ",
                        font="Helvetica 15 bold",
                        bg="#505050",
-                       foreground="#118ab2")
+                       foreground="#ff3838")
 
     info_label.grid(row=1, column=1, columnspan=2)
+    hideables.append(info_label)
+
+    def command_maker(name):
+        def cmd():
+            clear()
+            status_label = Label(root,
+                                 text="Enter new details. Leave empty if not to be changed.",
+                                 font="Helvetica 12 bold",
+                                 bg="#505050",
+                                 foreground="#ff3838")
+            status_label.grid(row=4, column=1, columnspan=2)
+            edit_labels = [label_maker("Platform: "),
+                           label_maker("Username: "),
+                           label_maker("Password: ")]
+
+            for i in range(len(edit_labels)):
+                edit_labels[i].grid(row=i + 1, column=1)
+
+            edit_entries = [Entry(root), Entry(root), Entry(root)]
+            for i in range(len(edit_entries)):
+                edit_entries[i].grid(row=i + 1, column=2)
+
+            hideables.extend(edit_entries)
+            hideables.extend(edit_labels)
+
+            def acquire():
+                global edited
+                edited = False
+                details = []
+                for i in edit_entries:
+                    details.append(i.get())
+                column_list = ["platform", "username", "passhash"]
+                for i in range(2):
+                    if details[i].rstrip().lstrip() != "":
+                        database.edit(name, column_list[i], details[0])
+                        edited = True
+
+                if details[2].lstrip().rstrip() != "":
+                    attempt_label = label_maker("Enter global Password: ")
+                    attempt_entry = Entry(root)
+                    attempt_label.grid(row=6, column=1)
+                    attempt_entry.grid(row=6, column=2)
+                    hideables.append(attempt_entry)
+                    hideables.append(attempt_label)
+
+                    def get_attempt():
+                        global edited
+                        attempt = attempt_entry.get()
+                        if gpass.checkgpass(attempt):
+                            key = spass.get_key(attempt)
+                            spasshash = spass.encrypt_spass(details[2].encode("utf-8"), key)
+                            database.edit(name, column_list[2], spasshash)
+                            edited = True
+                        else:
+                            status_label.configure(text="Wrong password! Please reenter.")
+
+                    gpass_okay_button = Button(root, text="Confirm",
+                                               fg="#118ab2", bg="#505050",
+                                               height=1, width=9,
+                                               font="Helvetica 15 bold", command=get_attempt)
+                    gpass_okay_button.grid(row=7, column=1, columnspan=2)
+                    hideables.append(gpass_okay_button)
+
+                if edited:
+                    status_label.configure("Record Edited! Go to retrieve to see changes")
+                else:
+                    status_label.configure("No details entered... ")
+
+            okay_button = Button(root, text="Confirm", fg="#118ab2", bg="#505050",
+                                 height=1, width=9,
+                                 font="Helvetica 15 bold", command=acquire)
+            okay_button.grid(row=5, column=1, columnspan=2)
+            hideables.append(okay_button)
+
+        return cmd
 
     def button_maker(name):
         return Button(root, text=name, fg="#118ab2", bg="#505050",
                       height=2, width=15,
-                      font="Helvetica 15 bold", command=lambda: None)
+                      font="Helvetica 15 bold", command=command_maker(name))
 
     button_list = []
     for i in data:
@@ -235,6 +311,7 @@ def edit_tab():
 
     for i in range(len(button_list)):
         button_list[i].grid(row=i // 2 + 2, column=i % 2 + 1)
+    hideables.extend(button_list)
 
 
 def initiate_tabs():
