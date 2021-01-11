@@ -235,6 +235,8 @@ def edit_tab():
                                  bg="#505050",
                                  foreground="#ff3838")
             status_label.grid(row=4, column=1, columnspan=2)
+            hideables.append(status_label)
+
             edit_labels = [label_maker("Platform: "),
                            label_maker("Username: "),
                            label_maker("Password: ")]
@@ -250,16 +252,19 @@ def edit_tab():
             hideables.extend(edit_labels)
 
             def acquire():
-                global edited
                 edited = False
                 details = []
                 for i in edit_entries:
                     details.append(i.get())
+
+                for i in details:
+                    if i.rstrip().lstrip() != "":
+                        edited = True
+
                 column_list = ["platform", "username", "passhash"]
                 for i in range(2):
                     if details[i].rstrip().lstrip() != "":
-                        database.edit(name, column_list[i], details[0])
-                        edited = True
+                        database.edit(name, column_list[i], details[i])
 
                 if details[2].lstrip().rstrip() != "":
                     attempt_label = label_maker("Enter global Password: ")
@@ -270,7 +275,6 @@ def edit_tab():
                     hideables.append(attempt_label)
 
                     def get_attempt():
-                        global edited
                         attempt = attempt_entry.get()
                         if gpass.checkgpass(attempt):
                             key = spass.get_key(attempt)
@@ -288,9 +292,9 @@ def edit_tab():
                     hideables.append(gpass_okay_button)
 
                 if edited:
-                    status_label.configure("Record Edited! Go to retrieve to see changes")
+                    status_label.configure(text="Record Edited! Go to retrieve to see changes")
                 else:
-                    status_label.configure("No details entered... ")
+                    status_label.configure(text="No details entered... ")
 
             okay_button = Button(root, text="Confirm", fg="#118ab2", bg="#505050",
                                  height=1, width=9,

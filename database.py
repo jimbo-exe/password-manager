@@ -52,9 +52,11 @@ def names():
 def edit(platform, column, entry):
     initiate_db()
     dt = datetime.now()
-    c.execute('''UPDATE TABLE password 
-    SET ? = ?, datetime = ? WHERE platform = ?''', (column, entry, dt, platform))
+    c.execute(f'''UPDATE password 
+    SET {column} = ?, datetime = ? WHERE platform = ?''', (entry, dt, platform))
+    conn.commit()
 
 
 if __name__ == "__main__":
     os.chdir("bin")
+    print(retrieve("Instagram"))
