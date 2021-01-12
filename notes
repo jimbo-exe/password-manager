@@ -1,5 +1,6 @@
-commands to add in install
-
-- imprt data and run initiate
-
-change database in database from memory to real file
+Missing stuff:
+1. Multiple users - We need to add Global username and gpass to allow multiple users on the same software.
+2. Most of the places where password has to be entered, the entry isn't censored.
+3. Unlock Session - Enter Global Password only once and not have to reenter it. (To be added
+    in settings tab and at signin)
+4. Change gpass (in settings tab).

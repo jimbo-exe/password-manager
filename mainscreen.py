@@ -174,6 +174,7 @@ def retrieve_tab():
                                              height=1, width=9,
                                              font="Helvetica 15 bold", command=copy)
                         copy_button.grid(row=7, column=2)
+                        hideables.append(copy_button)
                     else:
                         status_label.configure(text="Wrong password! Please Reenter.")
 

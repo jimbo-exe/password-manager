@@ -9,7 +9,6 @@ def showWindow():
     global pwdE
     global confirmE
 
-    os.chdir("bin")
     root = Tk()
     root.title("Password Manager")
 
@@ -71,6 +70,7 @@ def checkPwd():
 
 
 if __name__ == "__main__":
+    os.chdir("bin")
     showWindow()
     root.mainloop()
 
