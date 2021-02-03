@@ -16,7 +16,7 @@ def setgpass(password):
 
     with open("gpass.dat", "wb") as datfile:
         pickle.dump(passhash, datfile)  # Gpass stored in the dat file
-        print("New password set.")
+    return True
 
 
 def checkgpass(attempt):
@@ -27,7 +27,7 @@ def checkgpass(attempt):
         try:
             passhash = pickle.load(datfile)
         except EOFError:  # If the file is empty, it means no password has been set yet
-            print("Correct password not know. Kindly set a password first.")
+            print("Correct password not known. Kindly set a password first.")
 
     attempthash = hashlib.pbkdf2_hmac("sha256", attempt.encode("utf-8"), salt, 100)
 

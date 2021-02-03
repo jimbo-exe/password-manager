@@ -36,6 +36,9 @@ def attempt():
     if gpass.checkgpass(pwd):
         root.destroy()
         mainscreen.initiate()
+        mainscreen.initiate_tabs()
+        mainscreen.show_welcome()
+        mainscreen.root.mainloop()
     else:
         incorrectL = Label(root, text="Password incorrect", fg="red")
         incorrectL.grid(row=3, column=1)
@@ -43,6 +46,7 @@ def attempt():
 
 if __name__ == "__main__":
     signin_win()
+    root.mainloop()
 
 
 

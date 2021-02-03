@@ -4,3 +4,17 @@ Missing stuff:
 3. Unlock Session - Enter Global Password only once and not have to reenter it. (To be added
     in settings tab and at signin)
 4. Change gpass (in settings tab).
+
+
+
+
+
+main format
+
+if first run:
+    run install (signup runs automatically)
+
+else :
+    run signin
+    
+

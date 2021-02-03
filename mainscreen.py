@@ -60,6 +60,8 @@ def add_tab():
 
     add_entries = [Entry(root) for i in range(len(add_labels))]
     for i in range(len(add_labels)):
+        if i >=2:
+            add_entries[i].configure(show="*")
         add_entries[i].grid(row=i + 1, column=2)
 
     status_label = Label(root, text="Awaiting Details...",
@@ -146,7 +148,7 @@ def retrieve_tab():
                                       bg="#505050",
                                       foreground="#118ab2")
 
-                attempt_entry = Entry()
+                attempt_entry = Entry(show='*')
                 attempt_label.grid(row=6, column=1)
                 attempt_entry.grid(row=6, column=2)
                 hideables.extend([attempt_entry, attempt_label])
@@ -245,7 +247,7 @@ def edit_tab():
             for i in range(len(edit_labels)):
                 edit_labels[i].grid(row=i + 1, column=1)
 
-            edit_entries = [Entry(root), Entry(root), Entry(root)]
+            edit_entries = [Entry(root), Entry(root), Entry(root, show = '*')]
             for i in range(len(edit_entries)):
                 edit_entries[i].grid(row=i + 1, column=2)
 
@@ -269,7 +271,7 @@ def edit_tab():
 
                 if details[2].lstrip().rstrip() != "":
                     attempt_label = label_maker("Enter global Password: ")
-                    attempt_entry = Entry(root)
+                    attempt_entry = Entry(root, show='*')
                     attempt_label.grid(row=6, column=1)
                     attempt_entry.grid(row=6, column=2)
                     hideables.append(attempt_entry)
@@ -318,6 +320,62 @@ def edit_tab():
         button_list[i].grid(row=i // 2 + 2, column=i % 2 + 1)
     hideables.extend(button_list)
 
+def change_gpass_tab():
+    clear()
+
+    status_label = Label(root,
+                        text="Enter the existing password.",
+                        font="Helvetica 12 bold",
+                        bg="#505050",
+                        foreground="#ff3838")
+    status_label.grid(row=2, column=1, columnspan=2)
+    attempt_label = label_maker("Enter Current Password: ")
+    attempt_entry = Entry(root, show='*')
+    attempt_label.grid(row=1, column=1)
+    attempt_entry.grid(row=1, column=2)
+
+    def get_attempt():
+        attempt = attempt_entry.get()
+        if gpass.checkgpass(attempt):
+            status_label.configure(text="Correct password. Enter new password")
+
+            new_gpass_label = label_maker("Enter Current Password: ")
+            new_gpass_entry = Entry(root, show='*')
+            new_gpass_label.grid(row=4, column=1)
+            new_gpass_entry.grid(row=4, column=2)
+
+            new_confirm_label = label_maker("Enter Current Password: ")
+            new_confirm_entry = Entry(root, show='*')
+            new_confirm_label.grid(row=5, column=1)
+            new_confirm_entry.grid(row=5, column=2)
+
+            hideables.extend([new_confirm_entry, new_confirm_label,
+                            new_gpass_label, new_gpass_entry])
+
+            def get_new():
+                new_gpass = new_gpass_entry.get()
+                new_confirm = new_confirm_entry.get()
+
+                if new_gpass == new_confirm:
+                    gpass.setgpass(new_gpass)
+                    status_label.configure(text="New password set successfully!")
+
+                else:
+                    status_label.configure(text="Confirm password does not match!")
+
+            new_confirm_button = Button(root, text="Confirm",
+                                        fg="#118ab2", bg="#505050",
+                                        height=1, width=9,
+                                        font="Helvetica 15 bold", command=get_new)
+            
+
+    confirm_button = Button(root, text="Confirm",
+                            fg="#118ab2", bg="#505050",
+                            height=1, width=9,
+                            font="Helvetica 15 bold", command=get_attempt)
+    confirm_button.grid(row=3, column=1, columnspan=2)
+
+    hideables.extend([attempt_entry, attempt_label, status_label])
 
 def initiate_tabs():
     def tab_button(text, func):
@@ -332,7 +390,8 @@ def initiate_tabs():
 
     tabs = [tab_button("Retrieve Records", retrieve_tab),
             tab_button("Add New Record", add_tab),
-            tab_button("Edit Records", edit_tab)]
+            tab_button("Edit Records", edit_tab),
+            tab_button("Change Password", change_gpass_tab)]
 
     for i in range(len(tabs)):
         tabs[i].grid(row=2 * i + 1, column=0, sticky=W, rowspan=2)
