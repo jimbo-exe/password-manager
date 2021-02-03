@@ -7,7 +7,7 @@ import base64
 
 
 def get_key(gpass):
-    with open("keysalt.dat", "rb") as file:
+    with open("gsalt.dat", "rb") as file:
         keysalt = pickle.load(file)
 
     encryption = PBKDF2HMAC(algorithm=hashes.SHA256(),

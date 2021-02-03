@@ -60,7 +60,7 @@ def add_tab():
 
     add_entries = [Entry(root) for i in range(len(add_labels))]
     for i in range(len(add_labels)):
-        if i >=2:
+        if i >= 2:
             add_entries[i].configure(show="*")
         add_entries[i].grid(row=i + 1, column=2)
 
@@ -247,7 +247,7 @@ def edit_tab():
             for i in range(len(edit_labels)):
                 edit_labels[i].grid(row=i + 1, column=1)
 
-            edit_entries = [Entry(root), Entry(root), Entry(root, show = '*')]
+            edit_entries = [Entry(root), Entry(root), Entry(root, show='*')]
             for i in range(len(edit_entries)):
                 edit_entries[i].grid(row=i + 1, column=2)
 
@@ -320,14 +320,15 @@ def edit_tab():
         button_list[i].grid(row=i // 2 + 2, column=i % 2 + 1)
     hideables.extend(button_list)
 
+
 def change_gpass_tab():
     clear()
 
     status_label = Label(root,
-                        text="Enter the existing password.",
-                        font="Helvetica 12 bold",
-                        bg="#505050",
-                        foreground="#ff3838")
+                         text="Enter the existing password.",
+                         font="Helvetica 12 bold",
+                         bg="#505050",
+                         foreground="#ff3838")
     status_label.grid(row=2, column=1, columnspan=2)
     attempt_label = label_maker("Enter Current Password: ")
     attempt_entry = Entry(root, show='*')
@@ -350,13 +351,22 @@ def change_gpass_tab():
             new_confirm_entry.grid(row=5, column=2)
 
             hideables.extend([new_confirm_entry, new_confirm_label,
-                            new_gpass_label, new_gpass_entry])
+                              new_gpass_label, new_gpass_entry])
 
             def get_new():
                 new_gpass = new_gpass_entry.get()
                 new_confirm = new_confirm_entry.get()
 
                 if new_gpass == new_confirm:
+                    records = database.names()
+
+                    for i in records:
+                        old_spasshash = database.retrieve(i)[2]
+                        old_spass = spass.decrypt_spass(old_spasshash, spass.get_key(attempt))
+
+                        new_spasshash = spass.encrypt_spass(old_spass, spass.get_key(new_gpass))
+                        database.edit(i, "passhash", new_spasshash)
+
                     gpass.setgpass(new_gpass)
                     status_label.configure(text="New password set successfully!")
 
@@ -367,8 +377,8 @@ def change_gpass_tab():
                                         fg="#118ab2", bg="#505050",
                                         height=1, width=9,
                                         font="Helvetica 15 bold", command=get_new)
-            
-
+            new_confirm_button.grid(row=6, column=1, columnspan=2)
+            hideables.append(new_confirm_button)
     confirm_button = Button(root, text="Confirm",
                             fg="#118ab2", bg="#505050",
                             height=1, width=9,
@@ -376,6 +386,7 @@ def change_gpass_tab():
     confirm_button.grid(row=3, column=1, columnspan=2)
 
     hideables.extend([attempt_entry, attempt_label, status_label])
+
 
 def initiate_tabs():
     def tab_button(text, func):
