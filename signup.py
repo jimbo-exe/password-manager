@@ -69,8 +69,4 @@ def checkPwd():
         mismatchL.grid(row=7, column=1)
 
 
-if __name__ == "__main__":
-    os.chdir("bin")
-    showWindow()
-    root.mainloop()
 

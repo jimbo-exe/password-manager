@@ -57,6 +57,4 @@ def edit(platform, column, entry):
     conn.commit()
 
 
-if __name__ == "__main__":
-    os.chdir("bin")
-    print(retrieve("Instagram"))
+

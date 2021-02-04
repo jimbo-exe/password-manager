@@ -1,20 +1,95 @@
-Missing stuff:
-1. Multiple users - We need to add Global username and gpass to allow multiple users on the same software.
-2. Most of the places where password has to be entered, the entry isn't censored.
-3. Unlock Session - Enter Global Password only once and not have to reenter it. (To be added
-    in settings tab and at signin)
-4. Change gpass (in settings tab).
+signin:
+if __name__ == "__main__":
+    signin_win()
+    root.mainloop()
+
+signup:
+if __name__ == "__main__":
+    os.chdir("bin")
+    showWindow()
+    root.mainloop()
+
+spass:
+if __name__ == "__main__":
+    os.chdir("bin")
+    attempt = input("Enter the global password: ")
+    while not G.checkgpass(attempt):
+        print("Password incorrect. Please reenter.")
+        attempt = input("Enter the global password: ")
+
+    gpass = attempt
+
+    key = get_key(gpass)
+
+    spass = input("Enter the password of this account: ").encode("utf-8")
+    spasshash = encrypt_spass(spass, key)
+    print(spasshash)
+    print(decrypt_spass(spasshash, key))
+
+mainscreen:
+if __name__ == "__main__":
+    os.chdir("bin")
+    initiate()
+    initiate_tabs()
+    show_welcome()
+    root.mainloop()
+
+install:
+if __name__ == "__main__":
+    if create_folder("bin"):
+        file_list = [
+            "gpass.dat",
+            "gsalt.dat",
+            "keysalt.dat",
+        ]  # All the needed files in folder bin
+
+        for i in range(len(file_list)):
+            create_file(file_list[i])
+            if i != 0:
+                with open(file_list[i], "wb") as file:
+                    create_salt()
+
+    database.initiate_db()
+    database.initiate_table()
+    signup.showWindow()
+
+gpass:
+if __name__ == "__main__":
+    path = os.path.join(os.getcwd(), "bin")
+    os.chdir(path)  # Im using files from the bin folder so I changed directory to it
+
+    print(
+        "What do you want to do:",
+        "1 - Set New Password",
+        "2 - Enter Password",
+        sep="\n",
+        end=": ",
+    )
+    cmd = int(input())
+
+    if cmd == 1:
+        while True:
+            password = input("Enter the new password: ")
+            confirm = input("Confirm password: ")
+
+            if password == confirm:
+                break
+        setgpass(password)
+
+    elif cmd == 2:
+        attempt = input("Enter the password: ")
+        if checkgpass(attempt):
+            print("Correct password. You're in.")
+        else:
+            print("Wrong password. Try again")
+
+database:
+if __name__ == "__main__":
+    os.chdir("bin")
+    print(retrieve("Discord"))
 
 
 
 
-
-main format
-
-if first run:
-    run install (signup runs automatically)
-
-else :
-    run signin
     
 

@@ -63,20 +63,3 @@ def create_salt():
         pickle.dump(salt, f)
 
 
-if __name__ == "__main__":
-    if create_folder("bin"):
-        file_list = [
-            "gpass.dat",
-            "gsalt.dat",
-            "keysalt.dat",
-        ]  # All the needed files in folder bin
-
-        for i in range(len(file_list)):
-            create_file(file_list[i])
-            if i != 0:
-                with open(file_list[i], "wb") as file:
-                    create_salt()
-
-    database.initiate_db()
-    database.initiate_table()
-    signup.showWindow()

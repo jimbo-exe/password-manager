@@ -4,6 +4,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import gpass as G
 import base64
+import os
 
 
 def get_key(gpass):
@@ -29,17 +30,3 @@ def encrypt_spass(spass, key):
 def decrypt_spass(spasshash, key):
     return Fernet(key).decrypt(spasshash)
 
-
-if __name__ == "__main__":
-    attempt = input("Enter the global password: ")
-    while not G.checkgpass(attempt):
-        print("Password incorrect. Please reenter.")
-        attempt = input("Enter the global password: ")
-
-    gpass = attempt
-
-    key = get_key(gpass)
-
-    spass = input("Enter the password of this account: ").encode("utf-8")
-    spasshash = encrypt_spass(spass, key)
-    print(decrypt_spass(spasshash, key))

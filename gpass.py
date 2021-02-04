@@ -38,31 +38,4 @@ def checkgpass(attempt):
         return False
 
 
-if __name__ == "__main__":
-    path = os.path.join(os.getcwd(), "bin")
-    os.chdir(path)  # Im using files from the bin folder so I changed directory to it
 
-    print(
-        "What do you want to do:",
-        "1 - Set New Password",
-        "2 - Enter Password",
-        sep="\n",
-        end=": ",
-    )
-    cmd = int(input())
-
-    if cmd == 1:
-        while True:
-            password = input("Enter the new password: ")
-            confirm = input("Confirm password: ")
-
-            if password == confirm:
-                break
-        setgpass(password)
-
-    elif cmd == 2:
-        attempt = input("Enter the password: ")
-        if checkgpass(attempt):
-            print("Correct password. You're in.")
-        else:
-            print("Wrong password. Try again")

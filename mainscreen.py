@@ -88,7 +88,8 @@ def add_tab():
             attempt = data[-1]
             if gpass.checkgpass(attempt):
                 database.add(data[0], data[1],
-                             spass.encrypt_spass(data[2].encode("utf-8"), spass.get_key(attempt)))
+                             spass.encrypt_spass(data[2], 
+                             spass.get_key(attempt)))
                 status_label.config(text="Record successfully added!")
             else:
                 status_label.config(text="Global password incorrect... Please reenter")
@@ -157,8 +158,9 @@ def retrieve_tab():
                     attempt = attempt_entry.get()
 
                     if gpass.checkgpass(attempt):
-                        password = spass.decrypt_spass(database.retrieve(name)[2],
-                                                       spass.get_key(attempt))
+                        password = spass.decrypt_spass(
+                            database.retrieve(name)[2],
+                            spass.get_key(attempt))
                         password_label = Label(root,
                                                text=b"Password: " + password,
                                                font="Helvetica 15 bold",
@@ -265,11 +267,8 @@ def edit_tab():
                         edited = True
 
                 column_list = ["platform", "username", "passhash"]
-                for i in range(2):
-                    if details[i].rstrip().lstrip() != "":
-                        database.edit(name, column_list[i], details[i])
-
-                if details[2].lstrip().rstrip() != "":
+                
+                if edited:
                     attempt_label = label_maker("Enter global Password: ")
                     attempt_entry = Entry(root, show='*')
                     attempt_label.grid(row=6, column=1)
@@ -279,14 +278,19 @@ def edit_tab():
 
                     def get_attempt():
                         attempt = attempt_entry.get()
-                        if gpass.checkgpass(attempt):
-                            key = spass.get_key(attempt)
-                            spasshash = spass.encrypt_spass(details[2].encode("utf-8"), key)
-                            database.edit(name, column_list[2], spasshash)
-                            edited = True
+                        if gpass.checkgpass(attempt):                          
+                            
+                            for i in range(2):
+                                if details[i].rstrip().lstrip() != "":
+                                    database.edit(name, column_list[i], details[i])
+                
+                            if details[2].lstrip().rstrip() != "":
+                                key = spass.get_key(attempt)
+                                spasshash = spass.encrypt_spass(details[2].encode("utf-8"), key)
+                                database.edit(name, column_list[2], spasshash)
+                            status_label.configure(text="Record Edited! Go to retrieve to see changes.")
                         else:
                             status_label.configure(text="Wrong password! Please reenter.")
-
                     gpass_okay_button = Button(root, text="Confirm",
                                                fg="#118ab2", bg="#505050",
                                                height=1, width=9,
@@ -294,11 +298,10 @@ def edit_tab():
                     gpass_okay_button.grid(row=7, column=1, columnspan=2)
                     hideables.append(gpass_okay_button)
 
-                if edited:
-                    status_label.configure(text="Record Edited! Go to retrieve to see changes")
+                    
                 else:
-                    status_label.configure(text="No details entered... ")
-
+                    status_label.configure(text="Please enter atleast one new detail.")
+                    
             okay_button = Button(root, text="Confirm", fg="#118ab2", bg="#505050",
                                  height=1, width=9,
                                  font="Helvetica 15 bold", command=acquire)
@@ -421,9 +424,4 @@ def show_welcome():
     hideables.append(welcome_label)
 
 
-if __name__ == "__main__":
-    os.chdir("bin")
-    initiate()
-    initiate_tabs()
-    show_welcome()
-    root.mainloop()
+
